@@ -16,19 +16,19 @@ struct Movie {
     float rating;
 };
 
-void addMovie(struct Movie m[], int num){
+void addMovie(struct Movie m[], int *num){
     printf("Enter movie title: ");
-    scanf("%s", m[num].title);
+    scanf("%s", m[*num].title);
     printf("Enter movie genre: ");
-    scanf("%s", m[num].genre);
-    printf("Enter release date (day month year): ");
-    scanf("%d %d %d", &m[num].releaseDate.day, &m[num].releaseDate.month, &m[num].releaseDate.year);
+    scanf("%s", m[*num].genre);
+    printf("Enter release date (day month year): \n");
+    scanf("%d %d %d", &m[*num].releaseDate.day, &m[*num].releaseDate.month, &m[*num].releaseDate.year);
     printf("Enter movie rating: ");
-    scanf("%f", &m[num].rating);
-    num++;
+    scanf("%f", &m[*num].rating);
+    (*num)++;
 }
 
-void editMovie(struct Movie m[], int num, char search[20]){
+void editMovie(struct Movie m[], int num, char search[]){
     int found = 0;
     for(int i = 0; i < num; i++){
         if(strcmp(m[i].title, search) == 0){
@@ -44,11 +44,12 @@ void editMovie(struct Movie m[], int num, char search[20]){
             found = 1;
         }
     }
-    if(!found)
-        printf("Movie not found\n");
+    if(!found){
+        printf("Movie not found\n");   
+    }
 }
 
-void deleteMovie(struct Movie m[], int num, char search[20]){
+void deleteMovie(struct Movie m[], int num, char search[]){
     int found = 0;
     for(int i = 0; i <num; i++){
         if(strcmp(m[i].title, search) == 0){
@@ -59,11 +60,12 @@ void deleteMovie(struct Movie m[], int num, char search[20]){
             found = 1;
         }
     }
-    if(!found)
-        printf("Movie not found\n");
+    if(!found){
+        printf("Movie not found\n");   
+    }
 }
 
-void displayDetails(struct Movie m[], int num, char search[20]){
+void displayDetails(struct Movie m[], int num, char search[]){
     int found = 0;
     for(int i = 0; i < num; i++){
         if(strcmp(m[i].title, search) == 0){
@@ -76,7 +78,7 @@ void displayDetails(struct Movie m[], int num, char search[20]){
         }
     }
     if(!found){
-        printf("Movie not found\n");
+        printf("Movie not found\n");   
     }
 }
 
@@ -92,7 +94,7 @@ void topRatedMovies(struct Movie m[], int num){
     }
     printf("Top 5 rated movies: \n");
     for(int i = 0; i < 5; i++){
-        printf("Movie Ranking: %d\n", i);
+        printf("Movie Ranking: %d\n", i+1);
         printf("Title: %s\n", m[i].title);
         printf("Genre: %s\n", m[i].genre);
         printf("Release Date: %d/%d/%d\n", m[i].releaseDate.day, m[i].releaseDate.month, m[i].releaseDate.year);
@@ -118,13 +120,13 @@ void filterSearch(struct Movie m[], int num){
     scanf("%c", &choice2);
     if(choice2 == 'y'){
         printf("Enter release year you're looking for: \n");
-        scanf("%d", searchYear);
+        scanf("%d", &searchYear);
     }
     printf("Do you want to filter by rating? (y/n)\n");
     scanf("%c", &choice3);
     if(choice3 == 'y'){
         printf("Enter minimum rating you're looking for: \n");
-        scanf("%d", searchRating);
+        scanf("%f", &searchRating);
     }
     for(int i = 0; i < num; i++){
         if((choice1 != 'y' || strcmp(m[i].genre,searchGenre) == 0) &&
@@ -175,7 +177,7 @@ int main(){
         switch(choice){
             case 1:
                 printf("Enter details for movie to be added\n");
-                addMovie(movies, num);
+                addMovie(movies, &num);
                 break;
             case 2:
                 printf("Enter movie to be edited\n");
