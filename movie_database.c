@@ -58,6 +58,7 @@ void deleteMovie(struct Movie m[], int num, char search[]){
             }
             num--;
             found = 1;
+            printf("Movie deleted successfully\n");
         }
     }
     if(!found){
@@ -92,7 +93,6 @@ void topRatedMovies(struct Movie m[], int num){
             }
         }
     }
-    printf("Top 5 rated movies: \n");
     for(int i = 0; i < 5; i++){
         printf("Movie Ranking: %d\n", i+1);
         printf("Title: %s\n", m[i].title);
@@ -103,57 +103,84 @@ void topRatedMovies(struct Movie m[], int num){
     }
 }
 
-void filterSearch(struct Movie m[], int num){
+void filterSearch(struct Movie m[], int num) {
+    char c1, c2, c3;
     char searchGenre[20];
     int searchYear;
-    float searchRating;
-    struct Movie filtered[num];
-    int filterIndex = 0;
-    char choice1, choice2, choice3;
-    printf("Do you want to filer by genre? (y/n)\n");
-    scanf("%c", &choice1);
-    if(choice1 == 'y'){
-        printf("Enter genre you're looking for: \n");
+    float minimumRating;
+    int filteredIndex = 0;
+    struct Movie filteredMovies[num];
+
+    printf("Do you want to filter by genre? (y/n)\n");
+    scanf(" %c", &c1);
+    if(c1 == 'y'){
+        printf("Enter genre you're looking for: ");
         scanf("%s", searchGenre);
+        for(int i = 0; i < num; i++){
+            if(strcmp(m[i].genre, searchGenre) == 0){
+                filteredMovies[filteredIndex] = m[i];
+                filteredIndex++;
+            }
+        }
+    } else{
+        for(int i = 0; i < num; i++){
+            filteredMovies[filteredIndex] = m[i];
+            filteredIndex++;
+        }
     }
-    printf("Do you want to filter by year? (y/n)\n");
-    scanf("%c", &choice2);
-    if(choice2 == 'y'){
-        printf("Enter release year you're looking for: \n");
+
+    printf("Do you want to filter by release year? (y/n)\n");
+    scanf(" %c", &c2);
+    if(c2 == 'y'){
+        printf("Enter release year you're looking for: ");
         scanf("%d", &searchYear);
+        int tempIndex = 0;
+        for(int i = 0; i < filteredIndex; i++){
+            if(filteredMovies[i].releaseDate.year == searchYear){
+                filteredMovies[tempIndex] = filteredMovies[i];
+                tempIndex++;
+            }
+        }
+        filteredIndex = tempIndex;
     }
-    printf("Do you want to filter by rating? (y/n)\n");
-    scanf("%c", &choice3);
-    if(choice3 == 'y'){
-        printf("Enter minimum rating you're looking for: \n");
-        scanf("%f", &searchRating);
+
+    printf("Do you want to filter by minimum rating? (y/n)\n");
+    scanf(" %c", &c3);
+    if(c3 == 'y'){
+        printf("Enter minimum rating you're looking for: ");
+        scanf("%f", &minimumRating);
+        int tempIndex = 0;
+        for(int i = 0; i < filteredIndex; i++){
+            if(filteredMovies[i].rating >= minimumRating){
+                filteredMovies[tempIndex] = filteredMovies[i];
+                tempIndex++;
+            }
+        }
+        filteredIndex = tempIndex;
     }
-    for(int i = 0; i < num; i++){
-        if((choice1 != 'y' || strcmp(m[i].genre,searchGenre) == 0) &&
-           (choice2 != 'y' || m[i].releaseDate.year == searchYear) &&
-           (choice3 != 'y' || m[i].rating >= searchRating)) {
-            filtered[filterIndex] = m[i];
-            filterIndex++;
-           }
-    }
-    for(int i = 0; i < filterIndex; i++){
-        printf("Movie %d\n", i);
-        printf("Title: %s\n", m[i].title);
-        printf("Genre: %s\n", m[i].genre);
-        printf("Release Date: %d/%d/%d\n", m[i].releaseDate.day, m[i].releaseDate.month, m[i].releaseDate.year);
-        printf("Rating: %.2f\n", m[i].rating);
+
+    if(filteredIndex == 0){
+        printf("\nNo movies found matching your filtering criteria\n");
+    } else{
+        printf("\nMovies found based on your applied filters:\n");
+        for(int i = 0; i < filteredIndex; i++){
+            printf("\nMovie %d:", i+1);
+            printf("Title: %s\n", filteredMovies[i].title);
+            printf("Genre: %s\n", filteredMovies[i].genre);
+            printf("Release Date: %d/%d/%d\n", filteredMovies[i].releaseDate.day, filteredMovies[i].releaseDate.month, filteredMovies[i].releaseDate.year);
+            printf("Rating: %.2f\n", filteredMovies[i].rating);
+            printf("\n");
+        }
     }
 }
 
 void randomMovie(struct Movie m[], int num){
-    for(int i = 0; i < num; i++){
-        srand(time(0));
-        int randomIndex = rand() % num;
-        printf("Title: %s\n", m[randomIndex].title);
-        printf("Genre: %s\n", m[randomIndex].genre);
-        printf("Release Date: %d/%d/%d\n", m[randomIndex].releaseDate.day, m[randomIndex].releaseDate.month, m[randomIndex].releaseDate.year);
-        printf("Rating: %.2f\n", m[randomIndex].rating);
-    }
+    srand(time(0));
+    int randomIndex = rand() % num;
+    printf("Title: %s\n", m[randomIndex].title);
+    printf("Genre: %s\n", m[randomIndex].genre);
+    printf("Release Date: %d/%d/%d\n", m[randomIndex].releaseDate.day, m[randomIndex].releaseDate.month, m[randomIndex].releaseDate.year);
+    printf("Rating: %.2f\n", m[randomIndex].rating);
 }
 
 int main(){
@@ -176,41 +203,41 @@ int main(){
 
         switch(choice){
             case 1:
-                printf("Enter details for movie to be added\n");
+                printf("\nEnter details for movie to be added\n");
                 addMovie(movies, &num);
                 break;
             case 2:
-                printf("Enter movie to be edited\n");
+                printf("\nEnter movie to be edited\n");
                 scanf("%s", search);
                 editMovie(movies, num, search); 
                 break;
             case 3:
-                printf("Enter movie to be deleted\n");
+                printf("\nEnter movie to be deleted\n");
                 scanf("%s", search);
                 deleteMovie(movies, num, search);
                 break;
             case 4:
-                printf("Enter movie whose details are to be displayed\n");
+                printf("\nEnter movie whose details are to be displayed\n");
                 scanf("%s", search);
                 displayDetails(movies, num, search);
                 break;
             case 5:
-                printf("Displaying top 5 most rated movies\n");
+                printf("\nTop 5 most rated movies\n");
                 topRatedMovies(movies, num);
                 break;
             case 6:
-                printf("Apply filters to narrow down your search\n");
+                printf("\nApply filters to narrow down your search\n");
                 filterSearch(movies, num);
                 break;
             case 7:
-                printf("Genearating random movie recommendation\n");
+                printf("\nGenearating random movie recommendation...\n");
                 randomMovie(movies, num);
                 break;
             case 8:
-                printf("Exiting program...\n");
+                printf("\nExiting program...\n");
                 break;
             default:
-                printf("Invalid input, please try again");
+                printf("Invalid response, please try again");
         }
     } while(choice != 8);
 
