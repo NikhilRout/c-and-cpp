@@ -1,2 +1,2 @@
-# movie_database
-Movie database management and search using structures in C
+# c-and-cpp
+C and C++ Practice Codes and a Movie Database Management and Search Project using Structures in CC
